@@ -36,7 +36,7 @@ class Snake:
         self.direction = RIGHT
         self.direction_locked = False
 
-    def _is_opposite(self, direction):
+    def __is_opposite(self, direction):
         """Sprawdza, czy nowy kierunek jest przeciwny do aktualnego."""
         return (
             self.direction[0] + direction[0] == 0
@@ -48,7 +48,7 @@ class Snake:
         if self.direction_locked:
             return
 
-        if direction == self.direction or self._is_opposite(direction):
+        if direction == self.direction or self.__is_opposite(direction):
             return
 
         self.direction = direction

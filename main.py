@@ -22,7 +22,7 @@ def main():
     screen_size = config.screen_size
     fps = config.fps
     grid_size = config.grid_size
-    move_interval = config.move_interval
+    # move_interval = config.move_interval bedzie sie zmienial
     node_size = screen_size // grid_size
 
     screen = pygame.display.set_mode((screen_size, screen_size))
@@ -32,14 +32,14 @@ def main():
     running = True
     move_timer = 0.0
     score = 0
-    grid = Grid(grid_size, node_size)
+    grid = Grid(grid_size, node_size, config)
 
     while running:
         dt = clock.tick(fps) / 1000.0
         move_timer += dt
 
-        while move_timer >= move_interval:
-            move_timer -= move_interval
+        while move_timer >= config.move_interval:
+            move_timer -= config.move_interval
             running, score, ate = grid.update(score, config.high_score)
             if ate:
                 print("Twój wynik: {}".format(score))

@@ -9,8 +9,10 @@ from snake import Snake
 class Grid:
     """Łączy logikę planszy z obiektami gry."""
 
-    def __init__(self, grid_size, node_size):
+    def __init__(self, grid_size, node_size, config):
         """Tworzy planszę z jednym wężem i jednym owocem."""
+        self.config = config
+        
         self.grid_size = grid_size
         self.node_size = node_size
         self.snake = Snake(grid_size, node_size)
@@ -37,7 +39,7 @@ class Grid:
         self.fruit.set_pos(random.choice(free_positions))
         return True
 
-    def _wrap_head(self):
+    def __wrap_head(self):
         """Zawija głowę węża na przeciwległą stronę planszy."""
         head_row, head_col = self.snake.head.get_pos()
         wrapped_row = head_row % self.grid_size
@@ -47,12 +49,12 @@ class Grid:
     def update(self, score, high_score):
         """Wykonuje jeden krok logiki i zwraca stan gry oraz wynik."""
         self.snake.move()
-        self._wrap_head()
+        self.__wrap_head()
 
         ate = False
 
         if self.snake.check_collision(score, high_score):
-            return False, score
+            return False, score, ate
 
         if self.snake.head.get_pos() == self.fruit.get_pos():
             score += 1
@@ -60,6 +62,9 @@ class Grid:
             
             self.snake.add_node()
             self.place_fruit_random()
+            
+            # utrudnienie
+            self.config.move_interval -= 0.001 if self.config.move_interval > 0.05 else 0
 
         return True, score, ate
 
