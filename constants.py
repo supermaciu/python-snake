@@ -1,9 +1,5 @@
 """Wspólne stałe używane przez grę."""
 
-DEFAULT_SCREEN_SIZE = 600
-GRID_SIZE = 20
-MOVE_INTERVAL = 0.1
-
 BLACK = (0, 0, 0)
 GREY = (70, 70, 70)
 WHITE = (255, 255, 255)

@@ -1,23 +1,7 @@
 """Funkcje pomocnicze dla planszy gry."""
 
 import pygame
-
-from constants import GREY, WHITE
-from node import Node
-
-
-def make_grid(rows, node_size):
-    """Tworzy dwuwymiarową siatkę pól gry."""
-    grid = []
-
-    for i in range(rows):
-        grid.append([])
-        for j in range(rows):
-            node = Node(i, j, WHITE, node_size)
-            grid[i].append(node)
-
-    return grid
-
+from constants import GREY
 
 def draw_grid(win, rows, width):
     """Rysuje linie siatki na planszy."""

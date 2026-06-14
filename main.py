@@ -1,30 +1,29 @@
 """Główny punkt startowy gry Snake."""
 
 import pygame
+import time
 
 from config import Config
 from constants import (
-    DEFAULT_SCREEN_SIZE,
     DOWN,
-    GRID_SIZE,
     LEFT,
-    MOVE_INTERVAL,
     RIGHT,
     UP,
     WHITE,
 )
-from fruit import Fruit
-from snake import Snake
-from util import draw_grid, make_grid
+from grid import Grid
+from util import draw_grid
 
 def main():
     """Uruchamia grę, obsługuje pętlę i zapisuje wynik końcowy."""
     pygame.init()
 
     config = Config()
-    screen_size = config.screen_size or DEFAULT_SCREEN_SIZE
+    screen_size = config.screen_size
     fps = config.fps
-    node_size = screen_size // GRID_SIZE
+    grid_size = config.grid_size
+    move_interval = config.move_interval
+    node_size = screen_size // grid_size
 
     screen = pygame.display.set_mode((screen_size, screen_size))
     pygame.display.set_caption("Snake")
@@ -33,86 +32,59 @@ def main():
     running = True
     move_timer = 0.0
     score = 0
+    grid = Grid(grid_size, node_size)
 
-    grid = make_grid(GRID_SIZE, node_size)
-    head = grid[int(GRID_SIZE / 2)][int(GRID_SIZE / 2)]
-    snake = Snake(head, grid)
-    fruit = Fruit(snake)
+    while running:
+        dt = clock.tick(fps) / 1000.0
+        move_timer += dt
 
-    try:
-        while running:
-            dt = clock.tick(fps) / 1000.0
-            move_timer += dt
-
-            while move_timer >= MOVE_INTERVAL:
-                move_timer -= MOVE_INTERVAL
-                snake.move()
-
-                if head.row == -1:
-                    head_row, head_col = head.get_pos()
-                    head.set_pos((head_row + GRID_SIZE, head_col))
-                    snake.direction = LEFT
-                elif head.row == GRID_SIZE:
-                    head_row, head_col = head.get_pos()
-                    head.set_pos((head_row - GRID_SIZE, head_col))
-                    snake.direction = RIGHT
-                elif head.col == -1:
-                    head_row, head_col = head.get_pos()
-                    head.set_pos((head_row, head_col + GRID_SIZE))
-                    snake.direction = UP
-                elif head.col == GRID_SIZE:
-                    head_row, head_col = head.get_pos()
-                    head.set_pos((head_row, head_col - GRID_SIZE))
-                    snake.direction = DOWN
-
-                if snake.check_collision(score, config.high_score):
-                    running = False
-                    break
-
-                if head.get_pos() == fruit.get_pos():
-                    score = fruit.reset(score)
-                    config.high_score = max(config.high_score, score)
+        while move_timer >= move_interval:
+            move_timer -= move_interval
+            running, score, ate = grid.update(score, config.high_score)
+            if ate:
+                print("Twój wynik: {}".format(score))
+            config.high_score = max(config.high_score, score)
 
             if not running:
                 break
 
-            screen.fill(WHITE)
+        if not running:
+            break
 
-            for row in grid:
-                for node in row:
-                    node.draw(screen)
+        screen.fill(WHITE)
+        grid.draw(screen)
+        draw_grid(screen, grid_size, screen_size)
+        pygame.display.flip()
 
-            fruit.draw(screen)
-            snake.draw(screen)
-            draw_grid(screen, GRID_SIZE, screen_size)
-            pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            if event.type == pygame.KEYDOWN:
+                key_to_direction = {
+                    pygame.K_RIGHT: RIGHT,
+                    pygame.K_d: RIGHT,
+                    pygame.K_LEFT: LEFT,
+                    pygame.K_a: LEFT,
+                    pygame.K_UP: UP,
+                    pygame.K_w: UP,
+                    pygame.K_DOWN: DOWN,
+                    pygame.K_s: DOWN,
+                }
+
+                direction = key_to_direction.get(event.key)
+                if direction is not None:
+                    grid.snake.set_direction(direction)
+
+                if event.key == pygame.K_ESCAPE:
                     running = False
 
-                if event.type == pygame.KEYDOWN:
-                    key_to_direction = {
-                        pygame.K_RIGHT: RIGHT,
-                        pygame.K_d: RIGHT,
-                        pygame.K_LEFT: LEFT,
-                        pygame.K_a: LEFT,
-                        pygame.K_UP: UP,
-                        pygame.K_w: UP,
-                        pygame.K_DOWN: DOWN,
-                        pygame.K_s: DOWN,
-                    }
+    print("GAME OVER!\n\nTwój wynik wynosił: {} | High score: {}".format(score, config.high_score))
+    time.sleep(1)
 
-                    direction = key_to_direction.get(event.key)
-                    if direction is not None:
-                        snake.set_direction(direction)
-
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-    finally:
-        config.high_score = max(config.high_score, score)
-        config.save()
-        pygame.quit()
+    config.high_score = max(config.high_score, score)
+    config.save()
+    pygame.quit()
 
 
 if __name__ == "__main__":

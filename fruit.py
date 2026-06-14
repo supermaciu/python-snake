@@ -1,34 +1,18 @@
 """Logika owocu, który zwiększa wynik i wydłuża węża."""
 
-import random
+import pygame
 
-from constants import GRID_SIZE, ORANGE, WHITE
+from constants import ORANGE
 from node import Node
 
 
 class Fruit(Node):
-    """Reprezentuje owoc pojawiający się na planszy."""
+    """Reprezentuje czerwony/pomarańczowy owoc."""
 
-    def __init__(self, snake):
-        """Losuje pozycję owocu poza ciałem węża."""
-        self.snake = snake
-        self.node_size = snake.head.node_size
-        self.row = random.randint(1, GRID_SIZE - 1)
-        self.col = random.randint(1, GRID_SIZE - 1)
+    def __init__(self, node_size):
+        """Tworzy owoc na planszy."""
+        super().__init__(0, 0, ORANGE, node_size)
 
-        for node in self.snake.body:
-            while self.get_pos() == node.get_pos():
-                self.row = random.randint(1, GRID_SIZE - 1)
-                self.col = random.randint(1, GRID_SIZE - 1)
-
-        super().__init__(self.row, self.col, ORANGE, self.node_size)
-
-    def reset(self, score):
-        """Zwiększa wynik, wydłuża węża i losuje nowy owoc."""
-        self.color = WHITE
-        score += 1
-        print("Twój wynik: {}".format(score))
-
-        self.snake.add_node()
-        self.__init__(self.snake)
-        return score
+    def draw(self, win):
+        """Rysuje owoc na planszy."""
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.node_size, self.node_size))

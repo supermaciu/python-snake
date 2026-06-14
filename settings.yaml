@@ -1,3 +1,5 @@
 screen_size: 600
 fps: 60
-high_score: 8
+grid_size: 20
+move_interval: 0.1
+high_score: 14
