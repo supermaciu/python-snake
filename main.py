@@ -12,11 +12,14 @@ from constants import (
     WHITE,
 )
 from grid import Grid
-from util import draw_grid
+from util import draw_grid, play_random_pitch
 
 def main():
     """Uruchamia grę, obsługuje pętlę i zapisuje wynik końcowy."""
+    pygame.mixer.init()
     pygame.init()
+    
+    crunch_sound = pygame.mixer.Sound("crunch.mp3")
 
     config = Config()
     screen_size = config.screen_size
@@ -42,6 +45,7 @@ def main():
             move_timer -= config.move_interval
             running, score, ate = grid.update(score, config.high_score)
             if ate:
+                play_random_pitch(crunch_sound, 0.7, 1.3)
                 print("Twój wynik: {}".format(score))
             config.high_score = max(config.high_score, score)
 
