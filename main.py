@@ -49,11 +49,11 @@ def main():
                 print("Twój wynik: {}".format(score))
             config.high_score = max(config.high_score, score)
 
-            if not running:
-                break
+        #     if not running:
+        #         break
 
-        if not running:
-            break
+        # if not running:
+        #     break
 
         screen.fill(WHITE)
         grid.draw(screen)

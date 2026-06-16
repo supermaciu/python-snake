@@ -4,6 +4,7 @@ import random
 
 from fruit import Fruit
 from snake import Snake
+from constants import *
 
 
 class Grid:
@@ -54,6 +55,7 @@ class Grid:
         ate = False
 
         if self.snake.check_collision(score, high_score):
+            self.snake.head.color = RED
             return False, score, ate
 
         if self.snake.head.get_pos() == self.fruit.get_pos():
