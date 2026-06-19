@@ -2,6 +2,9 @@
 
 import random
 
+from pygame import Vector2
+import math
+
 from fruit import Fruit
 from snake import Snake
 from constants import *
@@ -16,6 +19,9 @@ class Grid:
         
         self.grid_size = grid_size
         self.node_size = node_size
+        
+        self.end_body = []
+        
         self.snake = Snake(grid_size, node_size)
         self.fruit = Fruit(node_size)
         self.place_fruit_random()
@@ -69,6 +75,27 @@ class Grid:
             self.config.move_interval -= 0.001 if self.config.move_interval > 0.05 else 0
 
         return True, score, ate
+    
+    def setup_end_animation(self):
+        self.snake.body[0].color = PURPLE
+        for seg in self.snake.body:
+            vec = Vector2(1, 0).rotate_rad(random.random() * math.pi) * random.randrange(300, 350)
+            self.end_body.append((seg, vec))
+    
+    def end_animation(self, dt, screen_size):
+        for seg, vec in self.end_body:
+            seg.x += vec.x * dt
+            seg.y += vec.y * dt
+            
+            if not (-self.node_size < seg.x < screen_size and -self.node_size < seg.y < screen_size):
+                vec.update(0, 0)
+
+        finished = True
+        for seg, vec in self.end_body:
+            if vec != Vector2(0, 0):
+                finished = False
+        
+        return finished
 
     def draw(self, win):
         """Rysuje obiekty gry na planszy."""

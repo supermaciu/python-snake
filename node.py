@@ -1,6 +1,7 @@
 """Abstrakcyjna reprezentacja elementu planszy."""
 
 from abc import ABC, abstractmethod
+from pygame import Vector2
 
 
 class Node(ABC):

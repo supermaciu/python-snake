@@ -86,8 +86,22 @@ def main():
 
     meow_sound.play()
 
+    grid.setup_end_animation()
+    
+    finished = False
+    while not finished:
+        dt = clock.tick(fps) / 1000.0
+        
+        pygame.event.pump()
+        
+        screen.fill(WHITE)
+        grid.draw(screen)
+        draw_grid(screen, grid_size, screen_size)
+        pygame.display.flip()
+        
+        finished = grid.end_animation(dt, screen_size)
+
     print("GAME OVER!\n\nTwój wynik wynosił: {} | High score: {}".format(score, config.high_score))
-    time.sleep(1)
 
     config.high_score = max(config.high_score, score)
     config.save()
