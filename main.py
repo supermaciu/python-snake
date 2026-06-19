@@ -20,6 +20,7 @@ def main():
     pygame.init()
     
     crunch_sound = pygame.mixer.Sound("crunch.mp3")
+    meow_sound = pygame.mixer.Sound("meow.mp3")
 
     config = Config()
     screen_size = config.screen_size
@@ -82,6 +83,8 @@ def main():
 
                 if event.key == pygame.K_ESCAPE:
                     running = False
+
+    meow_sound.play()
 
     print("GAME OVER!\n\nTwój wynik wynosił: {} | High score: {}".format(score, config.high_score))
     time.sleep(1)
